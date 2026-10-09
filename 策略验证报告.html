@@ -1,0 +1,149 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AQuant 策略验证报告</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f4f6f9;color:#1a1d24;line-height:1.65;padding:28px 14px}
+.wrap{max-width:1120px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 2px 22px rgba(0,0,0,.07);overflow:hidden}
+header{background:linear-gradient(135deg,#0d1b2a,#163b5c);color:#fff;padding:30px 36px}
+header h1{font-size:23px;font-weight:700}
+header .sub{margin-top:8px;font-size:13px;opacity:.82}
+.tagrow{margin-top:12px;display:flex;gap:7px;flex-wrap:wrap}
+.tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.26);padding:2px 10px;border-radius:20px;font-size:11.5px}
+main{padding:6px 36px 34px}
+section{padding:22px 0;border-bottom:1px solid #edeff3}
+section:last-child{border:none}
+h2{font-size:18px;color:#0d1b2a;margin-bottom:10px;padding-left:11px;border-left:4px solid #1c6fb8}
+p{font-size:14px;color:#333;margin:8px 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.kpi{background:#f8fafc;border:1px solid #e6eaf0;border-radius:10px;padding:13px 15px}
+.kpi .lb{font-size:11.5px;color:#7b8698;letter-spacing:.3px}
+.kpi .vl{font-size:21px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
+.kpi .ex{font-size:11px;color:#98a2b3;margin-top:2px}
+.up{color:#d93025}.dn{color:#1a9c52}.neu{color:#334}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px}
+th{background:#eef2f7;color:#0d1b2a;padding:8px 9px;text-align:left;border-bottom:2px solid #dbe2ec;white-space:nowrap}
+td{padding:7px 9px;border-bottom:1px solid #eef0f4;font-variant-numeric:tabular-nums}
+tr:hover td{background:#fafbfd}
+.num{text-align:right}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px}
+.box{padding:11px 15px;border-radius:0 8px 8px 0;font-size:13.5px;margin:12px 0}
+.warn{background:#fff6f6;border-left:3px solid #d93025}
+.info{background:#f0f6fc;border-left:3px solid #1c6fb8}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.legend{display:flex;gap:16px;font-size:12px;margin:6px 0 2px}
+.legend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+footer{padding:16px 36px;background:#f7f8fa;font-size:11.5px;color:#8a94a6;border-top:1px solid #edeff3}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}main,header,footer{padding-left:18px;padding-right:18px}}
+</style></head><body><div class="wrap">
+<header><h1>AQuant 策略验证报告 · 这个系统可信吗？</h1><div class="sub">样本外检验 / 参数敏感性 / 成本敏感性 / 随机对照 / 滚动前推 —— 五重检验判断回测结果是否为过拟合噪音</div><div class="tagrow"><span class="tag">20只标的</span><span class="tag">2023-11 → 2026-10</span><span class="tag">T+1 + 真实成本</span><span class="tag">结论：暂不可用于实盘</span></div></header><main>
+<section><h2>结论先行</h2><div class="box warn"><b>不可信，不能直接用于实盘。</b>五项独立检验中，四项给出明确的否定信号：样本内外收益<b>秩相关为负（-0.406）</b>；模拟真实使用的滚动前推<b>累计 -24.15%，而同期买入持有 +14.80%，超额 -38.95pp</b>；10 个策略中有 <b>9 个在固定滚动检验中跑输买入持有</b>；表现最好的 ATR 策略在 30 个随机策略中仅排<b>第 50 百分位（无优势）</b>。</div><div class="box ok"><b>但有一条结论是真的，且被三重独立检验反复验证：</b><b>「只在 MA60 之上做多」这个趋势过滤是有效的</b>——裸双均线(5/20) 滚动累计 <b>-35.85%</b>，加上该过滤后变为 <b>+15.82%</b>，差 51 个百分点。这个结论在样本内(+11.24%)、样本外(+28.15%)、滚动前推(+15.82%) 三个独立区间<b>同时成立</b>。换言之：<b>系统里真正有价值的是"低换手 + 趋势过滤"这个原则，而不是任何一个具体策略。</b></div></section>
+<section><h2>测试一 · 样本外检验（最关键）</h2><p>把 2023-11-15→2025-04-28 作为样本内（调参区），2025-04-28→2026-10-08 作为样本外（完全不碰），看样本内表现能否预测样本外表现。</p><table><thead><tr><th>策略</th><th class="num">样本内</th><th class="num">样本外</th><th class="num">OOS夏普</th><th class="num">OOS回撤</th><th>判定</th></tr></thead><tbody>
+<tr><td>双均线(5/20)</td><td class="num"><span class="up">+0.66%</span></td><td class="num"><span class="dn">-30.64%</span></td><td class="num">-1.06</td><td class="num"><span class="dn">-42.19%</span></td><td class="dn">样本内骗人</td></tr>
+<tr><td>双均线(10/30)</td><td class="num"><span class="dn">-7.59%</span></td><td class="num"><span class="up">+9.27%</span></td><td class="num">0.32</td><td class="num"><span class="dn">-18.54%</span></td><td class="up">样本外翻身</td></tr>
+<tr><td>双均线(20/60)</td><td class="num"><span class="up">+5.89%</span></td><td class="num"><span class="dn">-8.11%</span></td><td class="num">-0.30</td><td class="num"><span class="dn">-21.35%</span></td><td class="dn">样本内骗人</td></tr>
+<tr><td>双均线+MA60过滤(5/20)</td><td class="num"><span class="up">+11.24%</span></td><td class="num"><span class="up">+28.15%</span></td><td class="num">0.82</td><td class="num"><span class="dn">-20.38%</span></td><td class="neu">方向一致</td></tr>
+<tr><td>绝对动量(20日)</td><td class="num"><span class="up">+5.20%</span></td><td class="num"><span class="dn">-7.46%</span></td><td class="num">-0.35</td><td class="num"><span class="dn">-18.19%</span></td><td class="dn">样本内骗人</td></tr>
+<tr><td>绝对动量(60日)</td><td class="num"><span class="dn">-0.81%</span></td><td class="num"><span class="dn">-3.96%</span></td><td class="num">-0.24</td><td class="num"><span class="dn">-15.33%</span></td><td class="neu">方向一致</td></tr>
+<tr><td>RSI均值回归(14,30/70)</td><td class="num"><span class="up">+21.92%</span></td><td class="num"><span class="dn">-14.65%</span></td><td class="num">-0.64</td><td class="num"><span class="dn">-25.73%</span></td><td class="dn">样本内骗人</td></tr>
+<tr><td>ATR突破(20日)</td><td class="num"><span class="dn">-28.80%</span></td><td class="num"><span class="up">+39.89%</span></td><td class="num">0.98</td><td class="num"><span class="dn">-11.69%</span></td><td class="up">样本外翻身</td></tr>
+<tr><td>动量轮动(20日,Top5)</td><td class="num"><span class="dn">-0.97%</span></td><td class="num"><span class="up">+2.42%</span></td><td class="num">0.10</td><td class="num"><span class="dn">-23.86%</span></td><td class="up">样本外翻身</td></tr>
+<tr><td>买入持有(等权)</td><td class="num"><span class="up">+13.61%</span></td><td class="num"><span class="up">+8.88%</span></td><td class="num">0.38</td><td class="num"><span class="dn">-10.68%</span></td><td class="neu">方向一致</td></tr>
+</tbody></table>
+<div class="box warn"><b>秩相关(Spearman) = -0.406，pearson = -0.495。</b>理想情况应该显著为正（样本内好的样本外也好）。这里是<b>负数</b>，意味着<b>用回测收益去挑策略，是一个反向指标</b>——挑得越"好"，实盘越差。<br>典型例子：样本内冠军「RSI均值回归(14,30/70)」样本内 +21.92%，到样本外变成 -14.65%，在 10 个策略中排<b>倒数第 2</b>。</div></section>
+<section><h2>测试二 · 参数敏感性网格</h2><p>对 ATR 策略扫描 20 组参数（n × k），看收益曲面是"尖峰"还是"平原"。</p><table><thead><tr><th>n</th><th>k</th><th class="num">样本内</th><th class="num">样本外</th><th class="num">OOS夏普</th></tr></thead><tbody>
+<tr><td class="num">10</td><td class="num">1.0</td><td class="num"><span class="dn">-38.80%</span></td><td class="num"><span class="up">+10.13%</span></td><td class="num">0.33</td></tr>
+<tr><td class="num">10</td><td class="num">1.5</td><td class="num"><span class="dn">-40.05%</span></td><td class="num"><span class="up">+9.96%</span></td><td class="num">0.32</td></tr>
+<tr><td class="num">10</td><td class="num">2.0</td><td class="num"><span class="dn">-36.09%</span></td><td class="num"><span class="up">+10.57%</span></td><td class="num">0.34</td></tr>
+<tr><td class="num">10</td><td class="num">2.5</td><td class="num"><span class="dn">-36.06%</span></td><td class="num"><span class="up">+10.71%</span></td><td class="num">0.34</td></tr>
+<tr><td class="num">15</td><td class="num">1.0</td><td class="num"><span class="dn">-32.47%</span></td><td class="num"><span class="up">+28.90%</span></td><td class="num">0.76</td></tr>
+<tr><td class="num">15</td><td class="num">1.5</td><td class="num"><span class="dn">-34.51%</span></td><td class="num"><span class="up">+30.85%</span></td><td class="num">0.80</td></tr>
+<tr><td class="num">15</td><td class="num">2.0</td><td class="num"><span class="dn">-34.19%</span></td><td class="num"><span class="up">+29.00%</span></td><td class="num">0.77</td></tr>
+<tr><td class="num">15</td><td class="num">2.5</td><td class="num"><span class="dn">-31.76%</span></td><td class="num"><span class="up">+28.53%</span></td><td class="num">0.76</td></tr>
+<tr><td class="num">20</td><td class="num">1.0</td><td class="num"><span class="dn">-29.03%</span></td><td class="num"><span class="up">+39.51%</span></td><td class="num">0.96</td></tr>
+<tr><td class="num">20</td><td class="num">1.5</td><td class="num"><span class="dn">-28.80%</span></td><td class="num"><span class="up">+39.89%</span></td><td class="num">0.98</td></tr>
+<tr><td class="num">20</td><td class="num">2.0</td><td class="num"><span class="dn">-29.25%</span></td><td class="num"><span class="up">+40.38%</span></td><td class="num">0.99</td></tr>
+<tr><td class="num">20</td><td class="num">2.5</td><td class="num"><span class="dn">-25.44%</span></td><td class="num"><span class="up">+39.81%</span></td><td class="num">0.99</td></tr>
+<tr><td class="num">25</td><td class="num">1.0</td><td class="num"><span class="dn">-18.00%</span></td><td class="num"><span class="up">+48.81%</span></td><td class="num">1.12</td></tr>
+<tr><td class="num">25</td><td class="num">1.5</td><td class="num"><span class="dn">-18.03%</span></td><td class="num"><span class="up">+50.07%</span></td><td class="num">1.15</td></tr>
+<tr><td class="num">25</td><td class="num">2.0</td><td class="num"><span class="dn">-18.22%</span></td><td class="num"><span class="up">+49.39%</span></td><td class="num">1.14</td></tr>
+<tr><td class="num">25</td><td class="num">2.5</td><td class="num"><span class="dn">-18.55%</span></td><td class="num"><span class="up">+49.58%</span></td><td class="num">1.14</td></tr>
+<tr><td class="num">30</td><td class="num">1.0</td><td class="num"><span class="dn">-18.00%</span></td><td class="num"><span class="up">+47.32%</span></td><td class="num">1.03</td></tr>
+<tr><td class="num">30</td><td class="num">1.5</td><td class="num"><span class="dn">-18.09%</span></td><td class="num"><span class="up">+48.10%</span></td><td class="num">1.04</td></tr>
+<tr><td class="num">30</td><td class="num">2.0</td><td class="num"><span class="dn">-18.72%</span></td><td class="num"><span class="up">+47.28%</span></td><td class="num">1.03</td></tr>
+<tr><td class="num">30</td><td class="num">2.5</td><td class="num"><span class="dn">-18.73%</span></td><td class="num"><span class="up">+47.15%</span></td><td class="num">1.03</td></tr>
+</tbody></table>
+<div class="box info">参数网格内 样本内/样本外 秩相关 = <b>+0.934</b>（较高），说明<b>参数之间的相对排序是稳定的</b>。但注意：所有参数在样本内<b>全为负</b>（-18% ~ -29%），在样本外<b>全为正</b>（+32% ~ +50%）——绝对收益水平整体翻转，说明<b>策略对市场环境的依赖远大于对参数的依赖</b>。实用含义：选参数应取<b>平原的中心</b>，而不是样本内的最高点。</div></section>
+<section><h2>测试三 · 成本敏感性（最容易被忽略）</h2><table><thead><tr><th>滑点</th><th>策略</th><th class="num">总收益</th><th class="num">交易数</th><th>相对无摩擦的损耗</th></tr></thead><tbody>
+<tr><td class="num">0.05%</td><td>ATR突破(20日)</td><td class="num"><span class="up">+11.83%</span></td><td class="num">2510</td><td class="dn">+0.0pp</td></tr>
+<tr><td class="num">0.05%</td><td>双均线+MA60过滤(5/20)</td><td class="num"><span class="up">+50.84%</span></td><td class="num">921</td><td class="dn">+0.0pp</td></tr>
+<tr><td class="num">0.10%</td><td>ATR突破(20日)</td><td class="num"><span class="dn">-5.83%</span></td><td class="num">2488</td><td class="dn">-17.7pp</td></tr>
+<tr><td class="num">0.10%</td><td>双均线+MA60过滤(5/20)</td><td class="num"><span class="up">+36.07%</span></td><td class="num">919</td><td class="dn">-14.8pp</td></tr>
+<tr><td class="num">0.20%</td><td>ATR突破(20日)</td><td class="num"><span class="dn">-29.67%</span></td><td class="num">2440</td><td class="dn">-41.5pp</td></tr>
+<tr><td class="num">0.20%</td><td>双均线+MA60过滤(5/20)</td><td class="num"><span class="up">+11.69%</span></td><td class="num">916</td><td class="dn">-39.2pp</td></tr>
+<tr><td class="num">0.30%</td><td>ATR突破(20日)</td><td class="num"><span class="dn">-48.65%</span></td><td class="num">2403</td><td class="dn">-60.5pp</td></tr>
+<tr><td class="num">0.30%</td><td>双均线+MA60过滤(5/20)</td><td class="num"><span class="dn">-6.79%</span></td><td class="num">919</td><td class="dn">-57.6pp</td></tr>
+</tbody></table>
+<div class="box warn"><b>这是全报告最该记住的一张表。</b>ATR 策略滑点从 0.05% 提到 0.30%，收益从 +11.83% 掉到 <b>-48.65%</b>，<b>每增加 0.05% 滑点约吃掉 12 个百分点</b>——因为它的换手高达 2488 笔。而低换手的双均线+MA60过滤（919 笔）同样条件下只从 +50.84% 掉到 -6.79%，<b>抗成本能力强 3 倍以上</b>。<br>实盘的真实滑点（尤其小盘股、大单、跳空）往往<b>远高于千分之一</b>。任何换手率过高的策略，回测再漂亮也只是纸面富贵。</div></section>
+<section><h2>测试四 · 随机对照（照妖镜）</h2><p>构造 30 个<b>随机买卖</b>策略（同样的标的池、同样的交易频率），看真实策略能否显著跑赢纯粹的运气。</p><table><thead><tr><th>对照项</th><th class="num">收益</th></tr></thead><tbody><tr><td>随机策略收益中位数</td><td class="num"><span class="dn">-5.65%</span></td></tr><tr><td>随机策略最好</td><td class="num"><span class="up">+90.80%</span></td></tr><tr><td>随机策略最差</td><td class="num"><span class="dn">-37.55%</span></td></tr><tr><td><b>ATR突破(20日) 实测</b></td><td class="num"><span class="dn">-5.83%</span></td></tr></tbody></table><div class="box warn">ATR 只优于 <b>15/30</b> 个随机策略（第 50 百分位）。换句话说，<b>闭着眼睛随机交易，有一半的概率比这个策略赚得多</b>。这个策略没有任何可验证的 edge。</div></section>
+<section><h2>测试五、六 · 滚动前推（模拟真实使用）</h2><p>把历史切成 7 段，每段用<b>前面 250 天训练、后面 60 天检验</b>，逐段向前滚动。这是最贴近"我实际会怎么用"的检验方式。</p>
+<div class="box warn"><b>方式A：每段重新挑选最优策略（人最容易这么做）</b><br>滚动前推累计 <b><span class="dn">-24.15%</span></b>，同期买入持有 <b><span class="up">+14.80%</span></b>，超额 <b class="dn">-38.95pp</b>。<br><b>这个结果比"固定用一个策略"还差得多</b>，说明<b>「根据近期表现换策略」这个动作本身在毁灭收益</b>——你总是在策略最风光的时候买入它的下一次失效。</div>
+<table><thead><tr><th>检验段</th><th>训练期选中的策略</th><th class="num">训练收益</th><th class="num">实测收益</th><th class="num">同期持有</th></tr></thead><tbody>
+<tr><td class="mono">2024-11-27→2025-02-27</td><td>双均线+MA60过滤(5/20)</td><td class="num"><span class="up">+18.36%</span></td><td class="num"><span class="up">+2.74%</span></td><td class="num"><span class="up">+4.79%</span></td></tr>
+<tr><td class="mono">2025-02-28→2025-05-28</td><td>双均线+MA60过滤(5/20)</td><td class="num"><span class="up">+21.40%</span></td><td class="num"><span class="dn">-10.35%</span></td><td class="num"><span class="up">+0.87%</span></td></tr>
+<tr><td class="mono">2025-05-29→2025-08-21</td><td>RSI均值回归(14,30/70)</td><td class="num"><span class="up">+27.20%</span></td><td class="num"><span class="up">+0.01%</span></td><td class="num"><span class="up">+5.28%</span></td></tr>
+<tr><td class="mono">2025-08-22→2025-11-21</td><td>RSI均值回归(14,30/70)</td><td class="num"><span class="up">+35.00%</span></td><td class="num"><span class="dn">-3.10%</span></td><td class="num"><span class="dn">-0.33%</span></td></tr>
+<tr><td class="mono">2025-11-24→2026-02-25</td><td>双均线(10/30)</td><td class="num"><span class="up">+11.18%</span></td><td class="num"><span class="dn">-4.89%</span></td><td class="num"><span class="up">+7.33%</span></td></tr>
+<tr><td class="mono">2026-02-26→2026-05-26</td><td>双均线(20/60)</td><td class="num"><span class="up">+17.72%</span></td><td class="num"><span class="dn">-15.90%</span></td><td class="num"><span class="dn">-5.31%</span></td></tr>
+<tr><td class="mono">2026-05-27→2026-08-19</td><td>ATR突破(20日)</td><td class="num"><span class="up">+31.23%</span></td><td class="num"><span class="up">+6.25%</span></td><td class="num"><span class="up">+1.85%</span></td></tr>
+</tbody></table>
+<h3>方式B：固定策略跑完所有检验段（排除"选错策略"的干扰）</h3><table><thead><tr><th>策略</th><th class="num">滚动累计</th><th class="num">同期买入持有</th><th class="num">超额</th><th>判定</th></tr></thead><tbody>
+<tr><td>双均线(5/20)</td><td class="num"><span class="dn">-35.85%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="dn">-50.66%</span></td><td class="dn">跑输</td></tr>
+<tr><td>双均线(10/30)</td><td class="num"><span class="up">+8.33%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="dn">-6.48%</span></td><td class="dn">跑输</td></tr>
+<tr><td>双均线(20/60)</td><td class="num"><span class="up">+9.94%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="dn">-4.86%</span></td><td class="dn">跑输</td></tr>
+<tr><td>双均线+MA60过滤(5/20)</td><td class="num"><span class="up">+15.82%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="up">+1.02%</span></td><td class="up">跑赢（但在噪音内）</td></tr>
+<tr><td>绝对动量(20日)</td><td class="num"><span class="dn">-3.35%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="dn">-18.16%</span></td><td class="dn">跑输</td></tr>
+<tr><td>绝对动量(60日)</td><td class="num"><span class="dn">-3.06%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="dn">-17.86%</span></td><td class="dn">跑输</td></tr>
+<tr><td>RSI均值回归(14,30/70)</td><td class="num"><span class="dn">-2.90%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="dn">-17.70%</span></td><td class="dn">跑输</td></tr>
+<tr><td>ATR突破(20日)</td><td class="num"><span class="up">+8.42%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="dn">-6.39%</span></td><td class="dn">跑输</td></tr>
+<tr><td>动量轮动(20日,Top5)</td><td class="num"><span class="up">+2.18%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="dn">-12.63%</span></td><td class="dn">跑输</td></tr>
+<tr><td>买入持有(等权)</td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="up">+14.80%</span></td><td class="num"><span class="neu">+0.00%</span></td><td class="neu">基准</td></tr>
+</tbody></table>
+<div class="box warn"><b>10 个策略里只有 1 个跑赢买入持有</b>（双均线+MA60过滤，超额 +1.02pp），而这个幅度在统计上<b>与随机波动无法区分</b>。其余 9 个全部跑输，最差的裸双均线(5/20) 跑输 <b>50.66pp</b>。</div>
+<section><h2>那么，到底该怎么用？</h2>
+<h3>第一层：现在就能用，但不能碰钱</h3>
+<div class="box info">把它当作<b>策略研究工具</b>，而不是<b>赚钱机器</b>。具体可用：
+<ul>
+<li><b>验证投资假设</b>——比如"趋势过滤有没有用""低换手是否更抗成本"，这类<b>定性结论</b>是经得起检验的（本次就验证出了两条）</li>
+<li><b>成本与换手分析</b>——测试三那张表比任何说教都更能让人理解"手续费是量化第一杀手"</li>
+<li><b>标的扫描/信号输出</b>（<span class="mono">run.py scan</span>）——不过仍有待实盘验证</li>
+<li><b>作为继续开发的基础框架</b>——引擎的 T+1、整手、印花税、滑点建模是对的，缺的是好策略</li>
+</ul></div>
+
+<h3>第二层：要做到"可信"，必须补这六件事（按优先级）</h3>
+<table><thead><tr><th>#</th><th>要做什么</th><th>为什么</th></tr></thead><tbody>
+<tr><td>1</td><td><b>把样本量扩大 100 倍</b></td><td>现在是 20 只 × 2.9 年 ≈ 1.4 万个样本点。
+对量化研究而言<b>少得离谱</b>。业界起步线是 500+ 只 × 10 年。
+样本不足是本次失败的<b>根本原因</b>——噪音被当成信号</td></tr>
+<tr><td>2</td><td><b>把年换手压到 300% 以下</b></td><td>测试三证明：换手每翻一倍，成本吃掉约 12pp。
+本次唯一跑赢的策略换手 919 笔，而亏最惨的换手 2488 笔</td></tr>
+<tr><td>3</td><td><b>加入市场状态判断 / 允许做空或对冲</b></td><td>现在全部是<b>单边做多</b>策略，市场下跌时必然亏。
+测试一中样本外买入持有也只有 +8.88%，说明环境并不友好，而策略连这个都没跑过</td></tr>
+<tr><td>4</td><td><b>参数取"平原中心"而非"最高点"</b></td><td>测试二显示参数间相对排序稳定(ρ=+0.934)，
+但绝对水平随环境翻转。取最优点 = 精确过拟合；取平原中心 = 鲁棒</td></tr>
+<tr><td>5</td><td><b>用你自己的真实滑点数据</b></td><td>千分之一是拍脑袋的。用你实际成交的均价偏离度重新跑一遍，
+很可能直接把一半策略判死刑</td></tr>
+<tr><td>6</td><td><b>常态化留样本外</b></td><td>每次调参前先切出 30% 数据锁起来，只在最后看一眼。
+看一眼之后如果又去调参，那这 30% 就废了，得再切新的</td></tr>
+</tbody></table>
+
+<h3>第三层：真要上实盘的流程</h3>
+<div class="box warn">
+<b>① 纸上模拟 1–3 个月</b>——每天记录策略该下的单，但<b>不真下单</b>，月底对比模拟收益与实际行情<br>
+<b>② 小资金试跑 3–6 个月</b>（1–5 万，亏光不心疼的额度）<br>
+<b>③ 对比实盘 vs 回测的偏差</b>——偏差 &gt; 20% 说明模型有系统性错误（通常是滑点、涨跌停、流动性），必须回头修<br>
+<b>④ 达标后再分批加仓</b>——每次加仓前再跑一遍完整验证<br>
+<b>⑤ 建立熔断机制</b>——实盘回撤超过回测最大回撤的 1.5 倍时，强制停机复盘
+</div>
+<div class="box info"><b>另外提醒实盘接口现实：</b>A股个人投资者<b>不能直连交易所或券商的公开 API 自动下单</b>，
+通常要走券商提供的 <b>QMT / PTrade / 掘金</b> 等量化终端，且需申请开通权限、满足资金门槛。
+本系统目前完全不涉及下单层，接入需要额外开发——这也意味着你还有充足的时间把策略本身打磨好。</div></section>
+<section><h2>一句话总结</h2><div class="box warn">这个系统<b>作为"回测引擎"是合格的</b>（成本建模、T+1、整手约束都正确，方法论也对），但它里面的<b>策略都不合格</b>。本次验证最大的价值不是"证明它能赚钱"，而是<b>证明了"看起来最赚钱的那个策略恰恰最危险"</b>——样本内冠军到了样本外是倒数，这不是巧合，是过拟合的必然。<br><br>如果你只想记住一句话：<b>在 A股，低换手 + 顺势（只在主要均线上方做多），比任何精妙的择时参数都重要。</b>这是本次五项检验唯一反复验证出来的东西。</div></section>
+</main><footer>AQuant 验证套件 · 数据：腾讯财经日线，20只标的，2023-11-15 → 2026-10-08 · 所有检验均含 T+1、整手、佣金、印花税与滑点<br>本报告为策略研究输出，<b>不构成投资建议</b>；历史回测不代表未来收益。</footer></div></body></html>

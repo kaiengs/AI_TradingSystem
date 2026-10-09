@@ -1,0 +1,45 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>策略对比</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f4f6f9;color:#1a1d24;line-height:1.65;padding:28px 14px}
+.wrap{max-width:1120px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 2px 22px rgba(0,0,0,.07);overflow:hidden}
+header{background:linear-gradient(135deg,#0d1b2a,#163b5c);color:#fff;padding:30px 36px}
+header h1{font-size:23px;font-weight:700}
+header .sub{margin-top:8px;font-size:13px;opacity:.82}
+.tagrow{margin-top:12px;display:flex;gap:7px;flex-wrap:wrap}
+.tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.26);padding:2px 10px;border-radius:20px;font-size:11.5px}
+main{padding:6px 36px 34px}
+section{padding:22px 0;border-bottom:1px solid #edeff3}
+section:last-child{border:none}
+h2{font-size:18px;color:#0d1b2a;margin-bottom:10px;padding-left:11px;border-left:4px solid #1c6fb8}
+p{font-size:14px;color:#333;margin:8px 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.kpi{background:#f8fafc;border:1px solid #e6eaf0;border-radius:10px;padding:13px 15px}
+.kpi .lb{font-size:11.5px;color:#7b8698;letter-spacing:.3px}
+.kpi .vl{font-size:21px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
+.kpi .ex{font-size:11px;color:#98a2b3;margin-top:2px}
+.up{color:#d93025}.dn{color:#1a9c52}.neu{color:#334}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px}
+th{background:#eef2f7;color:#0d1b2a;padding:8px 9px;text-align:left;border-bottom:2px solid #dbe2ec;white-space:nowrap}
+td{padding:7px 9px;border-bottom:1px solid #eef0f4;font-variant-numeric:tabular-nums}
+tr:hover td{background:#fafbfd}
+.num{text-align:right}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px}
+.box{padding:11px 15px;border-radius:0 8px 8px 0;font-size:13.5px;margin:12px 0}
+.warn{background:#fff6f6;border-left:3px solid #d93025}
+.info{background:#f0f6fc;border-left:3px solid #1c6fb8}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.legend{display:flex;gap:16px;font-size:12px;margin:6px 0 2px}
+.legend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+footer{padding:16px 36px;background:#f7f8fa;font-size:11.5px;color:#8a94a6;border-top:1px solid #edeff3}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}main,header,footer{padding-left:18px;padding-right:18px}}
+</style></head><body><div class='wrap'><header><h1>策略横向对比 · core20</h1><div class='sub'>20只标的 · 500个交易日 · 初始资金 ¥1,000,000 · 调仓 daily · 2026-10-08 11:53</div></header><main><section><h2>策略对比</h2><table><thead><tr><th>策略</th><th class="num">总收益</th><th class="num">年化</th><th class="num">最大回撤</th><th class="num">夏普</th><th class="num">胜率</th><th class="num">交易数</th></tr></thead><tbody>
+<tr><td><b>ATR突破(20日)</b></td><td class="num"><span class="up">+42.30%</span></td><td class="num"><span class="up">+33.71%</span></td><td class="num"><span class="dn">-11.71%</span></td><td class="num">1.12</td><td class="num">36.2%</td><td class="num">1069</td></tr>
+<tr><td><b>双均线+MA60过滤(5/20)</b></td><td class="num"><span class="up">+28.87%</span></td><td class="num"><span class="up">+23.23%</span></td><td class="num"><span class="dn">-19.21%</span></td><td class="num">0.92</td><td class="num">56.4%</td><td class="num">395</td></tr>
+<tr><td><b>双均线(10/30)</b></td><td class="num"><span class="up">+5.72%</span></td><td class="num"><span class="up">+4.69%</span></td><td class="num"><span class="dn">-18.60%</span></td><td class="num">0.23</td><td class="num">54.5%</td><td class="num">648</td></tr>
+<tr><td><b>动量轮动(20日,Top5)</b></td><td class="num"><span class="up">+4.19%</span></td><td class="num"><span class="up">+3.44%</span></td><td class="num"><span class="dn">-23.82%</span></td><td class="num">0.18</td><td class="num">64.3%</td><td class="num">1218</td></tr>
+<tr><td><b>买入持有(等权)</b></td><td class="num"><span class="up">+3.04%</span></td><td class="num"><span class="up">+2.50%</span></td><td class="num"><span class="dn">-11.05%</span></td><td class="num">0.11</td><td class="num">0.0%</td><td class="num">19</td></tr>
+<tr><td><b>绝对动量(60日)</b></td><td class="num"><span class="dn">-3.65%</span></td><td class="num"><span class="dn">-3.01%</span></td><td class="num"><span class="dn">-15.34%</span></td><td class="num">-0.22</td><td class="num">58.0%</td><td class="num">2120</td></tr>
+<tr><td><b>绝对动量(20日)</b></td><td class="num"><span class="dn">-4.76%</span></td><td class="num"><span class="dn">-3.94%</span></td><td class="num"><span class="dn">-18.19%</span></td><td class="num">-0.24</td><td class="num">60.2%</td><td class="num">2431</td></tr>
+<tr><td><b>RSI均值回归(14,30/70)</b></td><td class="num"><span class="dn">-17.24%</span></td><td class="num"><span class="dn">-14.43%</span></td><td class="num"><span class="dn">-25.28%</span></td><td class="num">-0.84</td><td class="num">46.3%</td><td class="num">850</td></tr>
+<tr><td><b>双均线(5/20)</b></td><td class="num"><span class="dn">-21.80%</span></td><td class="num"><span class="dn">-18.33%</span></td><td class="num"><span class="dn">-32.29%</span></td><td class="num">-0.94</td><td class="num">52.7%</td><td class="num">932</td></tr>
+</tbody></table></section><section><h2>读表须知</h2><div class='box warn'><b>① 这是样本内(in-sample)结果。</b>所有策略都在同一段历史数据上评估，参数也是在这段数据上挑选的，表现最好的策略<b>几乎必然包含过拟合成分</b>——它只是"最贴合这段历史"，不等于"未来最好"。正确做法是留出样本外(out-of-sample)区间做验证，或做滚动前推测试(walk-forward)。<br><br><b>② 看交易笔数与收益的关系。</b>双均线(5/20) 976笔 → -22%，绝对动量(20日) 2431笔 → -4.8%。换手越高的策略被手续费/印花税/滑点磨损越狠，这是A股量化的第一杀手。<br><br><b>③ 看回撤而不只看收益。</b>ATR突破回撤仅 -11.7%，而收益最高；双均线(5/20)收益 -22% 且回撤 -32%。收益相近时，回撤小一半的策略实盘存活率高得多（亏50%要涨100%才回本）。</div></section></main><footer>AQuant · 策略对比 | 不构成投资建议</footer></div></body></html>
